@@ -111,8 +111,8 @@ void Write_Test(uint64_t time_us, uint16_t value)
 {
   struct log_TEST pkt = {
     LOG_PACKET_HEADER_INIT(LOG_TEST_MSG),
-    .time_us = time_us,
-    .value   = value,
+    time_us,
+    value,
   };
   WriteBlock(&pkt, sizeof(pkt));
 }
