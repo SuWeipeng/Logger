@@ -15,11 +15,23 @@ UINT br, bw;
 const struct LogStructure log_structure[] = {
   {
     LOG_FORMAT_MSG, sizeof(struct log_Format),
-    "FMT", "BBnNZ",      "Type,Length,Name,Format,Columns"
+    "FMT", "BBnNZ",       "Type,Length,Name,Format,Columns"
   },
   {
     LOG_TEST_MSG, sizeof(struct log_TEST),
     "TEST", "QH",         "TimeUS,value"
+  },
+  { LOG_PIDW1_MSG, sizeof(struct log_PID), 
+    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+  }, 
+  { LOG_PIDW2_MSG, sizeof(struct log_PID), 
+    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+  },
+  { LOG_PIDW3_MSG, sizeof(struct log_PID), 
+    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+  },
+  { LOG_PIDW4_MSG, sizeof(struct log_PID), 
+    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
   },
 };
 
@@ -113,6 +125,22 @@ void Write_Test(uint64_t time_us, uint16_t value)
     LOG_PACKET_HEADER_INIT(LOG_TEST_MSG),
     time_us,
     value,
+  };
+  WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Write_PID(uint8_t msg_type, const PID_Info *info)
+{
+  struct log_PID pkt = {
+    LOG_PACKET_HEADER_INIT(msg_type),
+    HAL_GetTick(),
+    info->target,
+    info->actual,
+    info->error,
+    info->P,
+    info->I,
+    info->D,
+    info->FF
   };
   WriteBlock(&pkt, sizeof(pkt));
 }

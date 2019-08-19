@@ -69,13 +69,39 @@ struct PACKED log_TEST {
   uint16_t value;
 };
 
+struct PACKED log_PID {
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  float   target;
+  float   actual;
+  float   error;
+  float   P;
+  float   I;
+  float   D;
+  float   FF;
+};
+
 enum LogMessages{
   LOG_TEST_MSG = 0,
+  LOG_PIDW1_MSG,
+  LOG_PIDW2_MSG,
+  LOG_PIDW3_MSG,
+  LOG_PIDW4_MSG,
 
   LOG_FORMAT_MSG = 128, // this must remain #128
 
   _LOG_LAST_MSG_
 };
+
+typedef struct PID_Info {
+  float target;
+  float actual;
+  float error;
+  float P;
+  float I;
+  float D;
+  float FF;
+}PID_Info;
 
 void     Log_Init(void);
 void     Write_Test(uint64_t time_us, uint16_t value);
