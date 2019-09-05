@@ -45,6 +45,9 @@ const struct LogStructure log_structure[] = {
   { LOG_ENC4_MSG, sizeof(struct log_ENC), 
     "ENC4", "Qiid",   "TimeUS,DLT,TK,DT"
   },
+  { LOG_PWM_MSG, sizeof(struct log_PWM), 
+    "PWM", "Qhhhh",   "TimeUS,m1,m2,m3,m4"
+  },
 };
 
 uint8_t Write_Format(const struct LogStructure *s);
@@ -168,6 +171,19 @@ void Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double de
     delta_tick,
     tick,
     delta_min
+  };
+  WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Write_PWM(int16_t pwm_1, int16_t pwm_2, int16_t pwm_3, int16_t pwm_4)
+{
+  struct log_PWM pkt = {
+    LOG_PACKET_HEADER_INIT(LOG_PWM_MSG),
+    HAL_GetTick(),
+    pwm_1,
+    pwm_2,
+    pwm_3,
+    pwm_4
   };
   WriteBlock(&pkt, sizeof(pkt));
 }

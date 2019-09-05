@@ -96,6 +96,15 @@ struct PACKED log_ENC {
   double   delta_min;
 };
 
+struct PACKED log_PWM {
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  int16_t  pwm_1;
+  int16_t  pwm_2;
+  int16_t  pwm_3;
+  int16_t  pwm_4;
+};
+
 enum LogMessages{
   LOG_TEST_MSG = 0,
   LOG_PIDW1_MSG,
@@ -106,6 +115,7 @@ enum LogMessages{
   LOG_ENC2_MSG,
   LOG_ENC3_MSG,
   LOG_ENC4_MSG,
+  LOG_PWM_MSG,
 
   LOG_FORMAT_MSG = 128, // this must remain #128
 
@@ -129,6 +139,7 @@ void     Log_Init(void);
 void     Write_Test(uint64_t time_us, uint16_t value);
 void     Write_PID(uint8_t msg_type, const PID_Info *info);
 void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min);
+void     Write_PWM(int16_t pwm_1, int16_t pwm_2, int16_t pwm_3, int16_t pwm_4);
 
 #ifdef __cplusplus
 }
