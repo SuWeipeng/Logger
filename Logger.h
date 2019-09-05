@@ -1,6 +1,10 @@
 #ifndef __LOGGER_H
 #define __LOGGER_H
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+   
 #include <stdint.h>
 
 /*
@@ -79,6 +83,9 @@ struct PACKED log_PID {
   float   I;
   float   D;
   float   FF;
+  float   DR;
+  float   ER;
+  float   TR;
 };
 
 enum LogMessages{
@@ -101,9 +108,17 @@ typedef struct PID_Info {
   float I;
   float D;
   float FF;
+  float DR;
+  float ER;
+  float TR;
 }PID_Info;
 
 void     Log_Init(void);
 void     Write_Test(uint64_t time_us, uint16_t value);
+void     Write_PID(uint8_t msg_type, const PID_Info *info);
 
+#ifdef __cplusplus
+}
 #endif
+   
+#endif /*__LOGGER_H*/

@@ -22,16 +22,16 @@ const struct LogStructure log_structure[] = {
     "TEST", "QH",         "TimeUS,value"
   },
   { LOG_PIDW1_MSG, sizeof(struct log_PID), 
-    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+    "PID1", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   }, 
   { LOG_PIDW2_MSG, sizeof(struct log_PID), 
-    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+    "PID2", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   },
   { LOG_PIDW3_MSG, sizeof(struct log_PID), 
-    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+    "PID3", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   },
   { LOG_PIDW4_MSG, sizeof(struct log_PID), 
-    "PID1", "Qfffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF"
+    "PID4", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   },
 };
 
@@ -140,7 +140,10 @@ void Write_PID(uint8_t msg_type, const PID_Info *info)
     info->P,
     info->I,
     info->D,
-    info->FF
+    info->FF,
+    info->DR,
+    info->ER,
+    info->TR
   };
   WriteBlock(&pkt, sizeof(pkt));
 }
