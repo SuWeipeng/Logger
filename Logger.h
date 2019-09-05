@@ -93,6 +93,7 @@ struct PACKED log_ENC {
   uint64_t time_us;
   int32_t  delta_tick;
   int32_t  tick;
+  double   delta_min;
 };
 
 enum LogMessages{
@@ -127,7 +128,7 @@ typedef struct PID_Info {
 void     Log_Init(void);
 void     Write_Test(uint64_t time_us, uint16_t value);
 void     Write_PID(uint8_t msg_type, const PID_Info *info);
-void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick);
+void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min);
 
 #ifdef __cplusplus
 }
