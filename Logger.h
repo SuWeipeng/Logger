@@ -88,12 +88,23 @@ struct PACKED log_PID {
   float   TR;
 };
 
+struct PACKED log_ENC {
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  int32_t  delta_tick;
+  int32_t  tick;
+};
+
 enum LogMessages{
   LOG_TEST_MSG = 0,
   LOG_PIDW1_MSG,
   LOG_PIDW2_MSG,
   LOG_PIDW3_MSG,
   LOG_PIDW4_MSG,
+  LOG_ENC1_MSG,
+  LOG_ENC2_MSG,
+  LOG_ENC3_MSG,
+  LOG_ENC4_MSG,
 
   LOG_FORMAT_MSG = 128, // this must remain #128
 
@@ -116,6 +127,7 @@ typedef struct PID_Info {
 void     Log_Init(void);
 void     Write_Test(uint64_t time_us, uint16_t value);
 void     Write_PID(uint8_t msg_type, const PID_Info *info);
+void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick);
 
 #ifdef __cplusplus
 }

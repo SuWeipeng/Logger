@@ -33,6 +33,18 @@ const struct LogStructure log_structure[] = {
   { LOG_PIDW4_MSG, sizeof(struct log_PID), 
     "PID4", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   },
+  { LOG_ENC1_MSG, sizeof(struct log_ENC), 
+    "ENC1", "Qii",   "TimeUS,DLT,TK"
+  },
+  { LOG_ENC2_MSG, sizeof(struct log_ENC), 
+    "ENC2", "Qii",   "TimeUS,DLT,TK"
+  },
+  { LOG_ENC3_MSG, sizeof(struct log_ENC), 
+    "ENC3", "Qii",   "TimeUS,DLT,TK"
+  },
+  { LOG_ENC4_MSG, sizeof(struct log_ENC), 
+    "ENC4", "Qii",   "TimeUS,DLT,TK"
+  },
 };
 
 uint8_t Write_Format(const struct LogStructure *s);
@@ -144,6 +156,17 @@ void Write_PID(uint8_t msg_type, const PID_Info *info)
     info->DR,
     info->ER,
     info->TR
+  };
+  WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick)
+{
+  struct log_ENC pkt = {
+    LOG_PACKET_HEADER_INIT(msg_type),
+    HAL_GetTick(),
+    delta_tick,
+    tick
   };
   WriteBlock(&pkt, sizeof(pkt));
 }
