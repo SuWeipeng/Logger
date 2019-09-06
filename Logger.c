@@ -34,16 +34,16 @@ const struct LogStructure log_structure[] = {
     "PID4", "Qffffffffff",   "TimeUS,Tar,Act,Err,P,I,D,FF,DR,ER,TR"
   },
   { LOG_ENC1_MSG, sizeof(struct log_ENC), 
-    "ENC1", "Qiid",   "TimeUS,DLT,TK,DT"
+    "ENC1", "QiidH",   "TimeUS,DLT,TK,DT,DMS"
   },
   { LOG_ENC2_MSG, sizeof(struct log_ENC), 
-    "ENC2", "Qiid",   "TimeUS,DLT,TK,DT"
+    "ENC2", "QiidH",   "TimeUS,DLT,TK,DT,DMS"
   },
   { LOG_ENC3_MSG, sizeof(struct log_ENC), 
-    "ENC3", "Qiid",   "TimeUS,DLT,TK,DT"
+    "ENC3", "QiidH",   "TimeUS,DLT,TK,DT,DMS"
   },
   { LOG_ENC4_MSG, sizeof(struct log_ENC), 
-    "ENC4", "Qiid",   "TimeUS,DLT,TK,DT"
+    "ENC4", "QiidH",   "TimeUS,DLT,TK,DT,DMS"
   },
   { LOG_PWM_MSG, sizeof(struct log_PWM), 
     "PWM", "Qhhhh",   "TimeUS,m1,m2,m3,m4"
@@ -163,14 +163,15 @@ void Write_PID(uint8_t msg_type, const PID_Info *info)
   WriteBlock(&pkt, sizeof(pkt));
 }
 
-void Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min)
+void Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min, uint16_t delta_ms)
 {
   struct log_ENC pkt = {
     LOG_PACKET_HEADER_INIT(msg_type),
     HAL_GetTick(),
     delta_tick,
     tick,
-    delta_min
+    delta_min,
+    delta_ms
   };
   WriteBlock(&pkt, sizeof(pkt));
 }
