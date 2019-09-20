@@ -57,9 +57,6 @@ uint8_t Write_Format(const struct LogStructure *s);
 	
 uint8_t WriteBlock(const void *pBuffer, uint16_t size)
 {
-#if defined(USE_RTTHREAD)
-  rt_enter_critical();
-#endif  
   /* Mount SD Card */
   if(f_mount(&fs, "", 0) != FR_OK)
     return 1;
@@ -89,10 +86,6 @@ uint8_t WriteBlock(const void *pBuffer, uint16_t size)
   /* Unmount SDCARD */
   if(f_mount(NULL, "", 1) != FR_OK)
     return 6;
-
-#if defined(USE_RTTHREAD)
-  rt_exit_critical();
-#endif
 
   return 0;
 }
