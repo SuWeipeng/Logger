@@ -1,19 +1,15 @@
 #include <string.h>
 #include "Logger.h"
-#include "fatfs.h"
 #if defined(USE_RTTHREAD)
 #include <entry.h>
-#endif
+#include <dfs_posix.h>
 
-#define LOG_FILE_NAME "log.bin"
+#define DBG_TAG               "LOG"
+#define DBG_LVL               DBG_INFO
+#include <rtdbg.h>
+#endif /* #if defined(USE_RTTHREAD) */
 
-FATFS fs;
-FATFS *pfs;
-FIL fil;
-DWORD fre_clust;
-uint32_t totalSpace, freeSpace;
-FRESULT fres;
-UINT br, bw;
+#define LOG_FILE_NAME "/log.bin"
 
 const struct LogStructure log_structure[] = {
   {
@@ -57,37 +53,18 @@ uint8_t Write_Format(const struct LogStructure *s);
 	
 uint8_t WriteBlock(const void *pBuffer, uint16_t size)
 {
-  /* Mount SD Card */
-  if(f_mount(&fs, "", 0) != FR_OK)
-    return 1;
+  int fd;
 
   /* Open file to write */
-  if(f_open(&fil, LOG_FILE_NAME, FA_OPEN_APPEND | FA_WRITE) != FR_OK)
-    return 2;
+  fd = open(LOG_FILE_NAME, O_WRONLY | O_APPEND | O_BINARY);
+  if (fd>= 0)
+  {
+    write(fd, pBuffer, size);
+    close(fd);
+    return 0;
+  }
 
-  /* Check freeSpace space */
-  if(f_getfree("", &fre_clust, &pfs) != FR_OK)
-    return 3;
-
-  totalSpace = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
-  freeSpace = (uint32_t)(fre_clust * pfs->csize * 0.5);
-
-  /* free space is less than 1kb */
-  if(freeSpace < 1)
-    return 4;
-
-  /* Writing*/
-  f_write (&fil, pBuffer, size, &bw);
-
-  /* Close file */
-  if(f_close(&fil) != FR_OK)
-    return 5;
-
-  /* Unmount SDCARD */
-  if(f_mount(NULL, "", 1) != FR_OK)
-    return 6;
-
-  return 0;
+  return 1;
 }
 
 void Fill_Format(const struct LogStructure *s, struct log_Format *pkt)
@@ -106,22 +83,33 @@ void Fill_Format(const struct LogStructure *s, struct log_Format *pkt)
 void Log_Init(void)
 {
   uint8_t i;
-  FRESULT res;
+  int     fd;
  
-  if(f_mount(&fs, "", 0) != FR_OK)
-    return;
-  res = f_open(&fil, LOG_FILE_NAME, FA_CREATE_NEW | FA_WRITE); 
-  if(res == FR_OK){
-    f_close(&fil);
-  } else if(res == FR_EXIST){
-    f_unlink(LOG_FILE_NAME);
-  }
-  if(f_mount(NULL, "", 1) != FR_OK)
-    return;
-  
-  for(i = 0; i < ARRAY_SIZE(log_structure); i++) 
+  LOG_I("Log_Init");
+  rt_thread_mdelay(500);
+  if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
   {
-    Write_Format(&log_structure[i]);
+    LOG_I("sd card mount to '/'");
+  }
+  else
+  {
+    LOG_W("sd card mount to '/' failed!");
+  }
+  
+  fd = open(LOG_FILE_NAME, O_RDONLY | O_BINARY);
+  if (fd>=0)
+  {
+    close(fd);
+    unlink(LOG_FILE_NAME);
+  }
+  
+  fd = open(LOG_FILE_NAME, O_WRONLY | O_BINARY | O_CREAT);
+  if (fd>= 0)
+  {
+    for(i = 0; i < ARRAY_SIZE(log_structure); i++) 
+    {
+      Write_Format(&log_structure[i]);
+    }
   }
 }
 
@@ -137,14 +125,16 @@ uint8_t Write_Format(const struct LogStructure *s)
   return WriteBlock(&pkt, sizeof(pkt));
 }
 
-void Write_Test(uint64_t time_us, uint16_t value)
+void Write_Test(void)
 {
-  struct log_TEST pkt = {
-    LOG_PACKET_HEADER_INIT(LOG_TEST_MSG),
-    time_us,
-    value,
-  };
-  WriteBlock(&pkt, sizeof(pkt));
+  for(uint8_t i=0;i<10;i++){
+    struct log_TEST pkt = {
+      LOG_PACKET_HEADER_INIT(LOG_TEST_MSG),
+      i,
+      i,
+    };
+    WriteBlock(&pkt, sizeof(pkt));
+  }
 }
 
 void Write_PID(uint8_t msg_type, const PID_Info *info)

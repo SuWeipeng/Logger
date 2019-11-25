@@ -137,7 +137,7 @@ typedef struct PID_Info {
 }PID_Info;
 
 void     Log_Init(void);
-void     Write_Test(uint64_t time_us, uint16_t value);
+void     Write_Test(void);
 void     Write_PID(uint8_t msg_type, const PID_Info *info);
 void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min, uint16_t delta_ms);
 void     Write_PWM(int16_t pwm_1, int16_t pwm_2, int16_t pwm_3, int16_t pwm_4);
