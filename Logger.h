@@ -106,6 +106,19 @@ struct PACKED log_PWM {
   int16_t  pwm_4;
 };
 
+struct PACKED log_KF {
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  float roll_acc;
+  float pitch_acc;
+  float gx;
+  float gy;
+  float roll_flt;
+  float pitch_flt;
+  float gx_flt;
+  float gy_flt;
+};
+
 enum LogMessages{
   LOG_TEST_MSG = 0,
   LOG_PIDW1_MSG,
@@ -117,6 +130,7 @@ enum LogMessages{
   LOG_ENC3_MSG,
   LOG_ENC4_MSG,
   LOG_PWM_MSG,
+  LOG_KF_MSG,
 
   LOG_FORMAT_MSG = 128, // this must remain #128
 
@@ -141,6 +155,7 @@ void     Write_Test(void);
 void     Write_PID(uint8_t msg_type, const PID_Info *info);
 void     Write_Encoder(uint8_t msg_type, int32_t delta_tick, int32_t tick, double delta_min, uint16_t delta_ms);
 void     Write_PWM(int16_t pwm_1, int16_t pwm_2, int16_t pwm_3, int16_t pwm_4);
+void     Write_Attitude(float roll_acc, float pitch_acc, float gx, float gy, float roll_flt, float pitch_flt, float gx_flt, float gy_flt);
 
 #ifdef __cplusplus
 }
