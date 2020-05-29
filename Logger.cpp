@@ -43,7 +43,7 @@ const struct LogStructure log_structure[] = {
     "PWM", "Qhhhh",   "TimeUS,m1,m2,m3,m4"
   },
   { LOG_KF_MSG, sizeof(struct log_KF), 
-    "KF", "Qffffffff",   "TimeUS,RAcc,PAcc,Gx,Gy,RF,PF,GxF,GyF"
+    "KF", "Qffffffffffff",   "TimeUS,RAcc,PAcc,Gx,Gy,RF,PF,GxF,GyF,VR,VP,VX,VY"
   },
 };
 
@@ -152,7 +152,18 @@ void Write_PWM(int16_t pwm_1, int16_t pwm_2, int16_t pwm_3, int16_t pwm_4)
   WriteBlock(&pkt, sizeof(pkt));
 }
 
-void Write_Attitude(float roll_acc, float pitch_acc, float gx, float gy, float roll_flt, float pitch_flt, float gx_flt, float gy_flt)
+void Write_Attitude(float roll_acc, 
+                    float pitch_acc, 
+                    float gx, 
+                    float gy, 
+                    float roll_flt, 
+                    float pitch_flt, 
+                    float gx_flt, 
+                    float gy_flt,
+                    float var_r,
+                    float var_p,
+                    float var_gx,
+                    float var_gy)
 {
   struct log_KF pkt = {
     LOG_PACKET_HEADER_INIT(LOG_KF_MSG),
@@ -164,7 +175,11 @@ void Write_Attitude(float roll_acc, float pitch_acc, float gx, float gy, float r
     roll_flt,
     pitch_flt,
     gx_flt,
-    gy_flt
+    gy_flt,
+    var_r,
+    var_p,
+    var_gx,
+    var_gy
   };
   WriteBlock(&pkt, sizeof(pkt));
 }
