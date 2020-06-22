@@ -45,6 +45,9 @@ const struct LogStructure log_structure[] = {
   { LOG_KF_MSG, sizeof(struct log_KF), 
     "KF", "Qffffffffffff",   "TimeUS,RAcc,PAcc,Gx,Gy,RF,PF,GxF,GyF,VR,VP,VX,VY"
   },
+  { LOG_RNG_MSG, sizeof(struct log_RNG), 
+    "RNG", "QH",   "TimeUS,dist"
+  },
 };
 
 uint8_t Write_Format(const struct LogStructure *s);
@@ -180,6 +183,16 @@ void Write_Attitude(float roll_acc,
     var_p,
     var_gx,
     var_gy
+  };
+  WriteBlock(&pkt, sizeof(pkt));
+}
+
+void Write_RangeFinder(uint16_t dist)
+{
+  struct log_RNG pkt = {
+    LOG_PACKET_HEADER_INIT(LOG_RNG_MSG),
+    HAL_GetTick(),
+    dist
   };
   WriteBlock(&pkt, sizeof(pkt));
 }

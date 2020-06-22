@@ -123,6 +123,12 @@ struct PACKED log_KF {
   float var_gy;
 };
 
+struct PACKED log_RNG {
+  LOG_PACKET_HEADER
+  uint64_t time_us;
+  uint16_t distance;
+};
+
 enum LogMessages{
   LOG_TEST_MSG = 0,
   LOG_PIDW1_MSG,
@@ -135,6 +141,7 @@ enum LogMessages{
   LOG_ENC4_MSG,
   LOG_PWM_MSG,
   LOG_KF_MSG,
+  LOG_RNG_MSG,
 
   LOG_FORMAT_MSG = 128, // this must remain #128
 
@@ -171,6 +178,7 @@ void     Write_Attitude(float roll_acc,
                         float var_p,
                         float var_gx,
                         float var_gy);
+void     Write_RangeFinder(uint16_t dist);
 
 #ifdef __cplusplus
 }
